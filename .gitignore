@@ -1,0 +1,21 @@
+# Local editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local development and diagnostic files
+.env
+.env.*
+*.log
+*.tmp
+*.bak
+*.png
+*.jpg
+*.jpeg
+noctalia.d.luau
+__pycache__/
+*.py[cod]
