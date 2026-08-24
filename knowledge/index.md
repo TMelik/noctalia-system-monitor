@@ -2,7 +2,7 @@
 okf_version: "0.2"
 ---
 
-# System Summary knowledge index
+# System Monitor knowledge index
 
 This directory is the repository-local Open Knowledge Format v0.2 discovery and handoff layer. Source files remain authoritative; these concepts explain how they fit together and how to maintain them safely.
 

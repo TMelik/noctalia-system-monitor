@@ -1,6 +1,6 @@
 # Project agent guide
 
-This repository contains the `tmelik/system-summary` Noctalia v5 plugin.
+This repository contains the `tmelik/system-monitor` Noctalia v5 plugin.
 
 ## Reading order
 

@@ -1,7 +1,7 @@
 ---
 type: InterfaceContract
 title: User-visible widget behavior
-description: Stable presentation and interaction contracts for the System Summary capsule.
+description: Stable presentation and interaction contracts for the System Monitor capsule.
 tags: [noctalia, bar, interface, metrics]
 status: stable
 sources:

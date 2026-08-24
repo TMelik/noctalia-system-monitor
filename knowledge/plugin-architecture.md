@@ -1,6 +1,6 @@
 ---
 type: Architecture
-title: System Summary plugin architecture
+title: System Monitor plugin architecture
 description: How the bar widget obtains, formats, and renders Noctalia system statistics.
 tags: [noctalia, plugin, architecture, system-monitor]
 status: stable
@@ -11,7 +11,7 @@ sources:
 
 # Plugin architecture
 
-`plugin.toml` declares one bar-widget entry, `tmelik/system-summary:summary`, at plugin API 16. API 16 is the oldest level that provides both aggregate system snapshots and disk statistics.
+`plugin.toml` declares one bar-widget entry, `tmelik/system-monitor:summary`, at plugin API 16. API 16 is the oldest level that provides both aggregate system snapshots and disk statistics.
 
 `widget.luau` runs in Noctalia's plugin VM and redraws once per second. Noctalia's system-monitor service owns the actual sampling cadence, so redraws may legitimately reuse the latest sample.
 
