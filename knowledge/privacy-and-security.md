@@ -23,6 +23,6 @@ The plugin does not:
 - write persistent state;
 - collect process names, command lines, usernames, hostnames, or file paths.
 
-The public repository must not contain local usernames, machine names, home-directory paths, logs, environment files, or unsanitized screenshots. `thumbnail.webp` is synthetic and contains fictional measurements.
+The public repository must not contain local usernames, machine names, home-directory paths, logs, environment files, or unsanitized screenshots. `thumbnail.webp` uses a privacy-clean Noctalia System capture containing generic performance metrics but no usernames, hostnames, paths, or other machine identifiers.
 
 Run the local validator from [Local development](local-development.md) before publication. The validator checks the OKF structure, internal links, and common machine-specific data leaks. This check reduces accidental exposure but does not replace review of the complete Git diff before committing or pushing.

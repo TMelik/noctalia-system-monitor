@@ -17,6 +17,6 @@ Version `1.2.0` implements one dependency-free bar widget using plugin API 16. T
 
 The manifest exposes per-instance controls for every metric plus separators, tooltip visibility, network-unit style, and disk path. Empty categories do not leave orphan separators, and disabling all metrics leaves a compact recovery prompt.
 
-The publication package is licensed under GPL-3.0-only and includes its manifest, entry script, public README, English setting translations, synthetic 960×540 WebP thumbnail, agent guidance, and this OKF v0.2 bundle.
+The publication package is licensed under GPL-3.0-only and includes its manifest, entry script, public README, English setting translations, generator-produced 960×540 WebP thumbnail based on a privacy-clean Noctalia System capture, agent guidance, and this OKF v0.2 bundle.
 
-No commit, remote, fork, or pull request is part of the current local state. Before publication, re-run [Local development](local-development.md), inspect the complete diff, and then place the plugin directory in a fork of the Noctalia community-plugins repository.
+The source is published at `TMelik/noctalia-system-monitor`. The community-store package is submitted from branch `TMelik:add-system-monitor` in [noctalia-dev/community-plugins#460](https://github.com/noctalia-dev/community-plugins/pull/460); the remaining publication step is upstream review and merge.
