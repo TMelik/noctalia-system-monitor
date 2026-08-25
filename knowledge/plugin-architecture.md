@@ -11,17 +11,21 @@ sources:
 
 # Plugin architecture
 
-`plugin.toml` declares one bar-widget entry, `tmelik/system-monitor:summary`, at plugin API 16. API 16 is the oldest level that provides both aggregate system snapshots and disk statistics.
+`plugin.toml` declares one bar-widget entry, `tmelik/system-monitor:summary`, at plugin API 26. API 26 is required because the widget reads effective global threshold settings with `noctalia.getSetting()`.
 
 `widget.luau` runs in Noctalia's plugin VM and redraws once per second. Noctalia's system-monitor service owns the actual sampling cadence, so redraws may legitimately reuse the latest sample.
 
 The update flow is:
 
-1. Read the aggregate snapshot with `noctalia.systemStats()`.
-2. Opt the root filesystem into disk sampling with `noctalia.diskStats("/")`.
-3. Calculate swap utilization from used and total MiB.
-4. Format percentages, temperature, and decimal network rates.
-5. Render glyph/label pairs inside one `ui.row` or `ui.column`, depending on bar orientation.
-6. Publish a multiline tooltip containing expanded metric names.
+1. Read per-instance display settings and the aggregate snapshot with `noctalia.systemStats()`.
+2. Read every global activity/critical threshold pair under `system.monitor`, falling back to Noctalia defaults when a pair is invalid.
+3. Select aggregate or exact-interface network rates and opt the configured disk path into `diskStats()` sampling.
+4. Derive swap and VRAM percentages plus RAM/disk used and available amounts.
+5. Render available glyph/label pairs in CPU, GPU, memory, storage, network order inside one orientation-aware capsule.
+6. Publish an ordered two-column tooltip as `{ key, value }` rows for metrics that were actually rendered.
 
-Missing snapshots or individual sensors never become a misleading zero. The widget displays `—`, while a completely unavailable system monitor produces one explanatory fallback label.
+Threshold coloring is discrete: regular below activity, the configured activity color below critical, and the configured critical color at critical or above. Network values are converted to decimal MB/s for comparison; RAM and disk always use utilization percentages even when their labels show absolute amounts.
+
+Missing snapshots or individual sensors never become a misleading zero. Depending on settings, individual unavailable values display `—` or are omitted. Dedicated `System data unavailable`, `No metrics`, and `No data` fallbacks preserve access to the capsule.
+
+The tooltip follows the same CPU, GPU, memory, storage, and network ordering as the capsule. CPU frequency/load are contextual rows whenever either CPU metric is rendered. VRAM, RAM, swap, and disk values combine utilization with `used / total`; network combines only enabled and rendered RX/TX directions. Fallback tooltips remain plain explanatory strings.

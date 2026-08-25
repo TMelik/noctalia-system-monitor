@@ -18,7 +18,7 @@ Run the repository-local knowledge and privacy check:
 python3 scripts/validate_okf.py
 ```
 
-For runtime testing, place the plugin where a Noctalia development source can discover it, enable `tmelik/system-monitor`, and add `tmelik/system-monitor:summary` to a bar. Confirm all seven values render, unavailable sensors show `—`, the tooltip is readable, and left-click opens Control Center's System tab.
+For runtime testing, place the plugin where a Noctalia API 26+ development source can discover it, enable `tmelik/system-monitor`, and add `tmelik/system-monitor:summary` to a bar. Confirm the seven default values render with GPU hidden, then cover threshold boundaries and custom colors, every RAM/disk mode, aggregate/valid/unknown interfaces, RX-only and TX-only configurations, partial GPU data, unavailable hiding, a long disk path, all three fallbacks, both bar orientations, tooltip on/off, and separator cleanup. Verify that the normal tooltip is an aligned two-column table in CPU-to-network order and remains reasonably sized. Confirm left-click opens Control Center's System tab and middle-click opens widget settings.
 
 Before a community submission:
 

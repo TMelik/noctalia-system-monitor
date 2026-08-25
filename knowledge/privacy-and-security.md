@@ -13,7 +13,7 @@ sources:
 
 # Privacy and security boundary
 
-Noctalia plugins are trusted user-owned code, but this plugin deliberately uses a narrow runtime surface. It reads only the aggregate snapshots returned by `systemStats()` and the root-disk snapshot returned by `diskStats("/")`.
+Noctalia plugins are trusted user-owned code, but this plugin deliberately uses a narrow runtime surface. It reads aggregate snapshots returned by `systemStats()`, one user-configured disk snapshot returned by `diskStats(path)`, and effective global `system.monitor` threshold values returned by `getSetting()`.
 
 The plugin does not:
 
@@ -21,7 +21,9 @@ The plugin does not:
 - execute subprocesses;
 - read arbitrary files or environment variables;
 - write persistent state;
-- collect process names, command lines, usernames, hostnames, or file paths.
+- collect process names, command lines, usernames, hostnames, or unrelated file paths.
+
+The configured disk path and network interface name are used only for Noctalia snapshot selection and tooltip presentation. They are not persisted by the script or sent elsewhere.
 
 The public repository must not contain local usernames, machine names, home-directory paths, logs, environment files, or unsanitized screenshots. `thumbnail.webp` uses a privacy-clean Noctalia System capture containing generic performance metrics but no usernames, hostnames, paths, or other machine identifiers.
 
