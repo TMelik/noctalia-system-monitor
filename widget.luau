@@ -135,28 +135,28 @@ local function thresholdPair(name)
 end
 
 local function metricColor(value, thresholds, colors)
-  if not colors.highlightValues or type(value) ~= "number" or thresholds[2] == 0 then return nil end
+  if not colors.highlightValues or type(value) ~= "number" or thresholds[2] == 0 then return "on_surface" end
   if value >= thresholds[2] then return colors.criticalColor end
   if value >= thresholds[1] then return colors.activityColor end
-  return nil
+  return "on_surface"
 end
 
-local function appendDivider(children)
+local function appendDivider(children, key)
   local mark = barWidget.isVertical() and "─" or "│"
-  table.insert(children, ui.label({ text = mark, color = "outline", fontWeight = "light" }))
+  table.insert(children, ui.label({ key = key, text = mark, color = "outline", fontWeight = "light" }))
 end
 
-local function appendGroup(children, group, showSeparators)
+local function appendGroup(children, group, key, showSeparators)
   if #group == 0 then return end
-  if #children > 0 and showSeparators then appendDivider(children) end
+  if #children > 0 and showSeparators then appendDivider(children, "divider:" .. key) end
   for _, child in ipairs(group) do table.insert(children, child) end
 end
 
-local function appendMetric(group, glyph, text, value, thresholds, colors, highlightValue)
+local function appendMetric(group, key, glyph, text, value, thresholds, colors, highlightValue)
   if value == nil and colors.hideUnavailable then return false end
   local color = metricColor(highlightValue, thresholds, colors)
-  table.insert(group, ui.glyph({ name = glyph, size = 14, color = color }))
-  table.insert(group, ui.label({ text = text, fontWeight = "medium", color = color }))
+  table.insert(group, ui.glyph({ key = key .. ":glyph", name = glyph, size = 14, color = color }))
+  table.insert(group, ui.label({ key = key .. ":label", text = text, fontWeight = "medium", color = color }))
   return true
 end
 
@@ -592,22 +592,22 @@ function update()
   local children, processor, graphics, memory, storage, network = {}, {}, {}, {}, {}, {}
   local shown = {}
 
-  if settings.showCpuUsage then shown.cpuUsage = appendMetric(processor, "cpu", formatPercent(cpuUsage), cpuUsage, thresholds.cpu_usage, colors, cpuUsage) end
-  if settings.showCpuTemperature then shown.cpuTemperature = appendMetric(processor, "temperature", formatTemperature(cpuTemp), cpuTemp, thresholds.cpu_temp, colors, cpuTemp) end
-  if settings.showGpuUsage then shown.gpuUsage = appendMetric(graphics, "device-desktop", formatPercent(gpuUsage), gpuUsage, thresholds.gpu_usage, colors, gpuUsage) end
-  if settings.showGpuTemperature then shown.gpuTemperature = appendMetric(graphics, "temperature", formatTemperature(gpuTemp), gpuTemp, thresholds.gpu_temp, colors, gpuTemp) end
-  if settings.showGpuVram then shown.gpuVram = appendMetric(graphics, "memory", formatPercent(gpuVram), gpuVram, thresholds.gpu_vram, colors, gpuVram) end
-  if settings.showRam then shown.ram = appendMetric(memory, "server-2", ramText, ramValue, thresholds.ram_pct, colors, ramUsage) end
-  if settings.showSwap then shown.swap = appendMetric(memory, "arrows-exchange", formatPercent(swapUsage), swapUsage, thresholds.swap_pct, colors, swapUsage) end
-  if settings.showDisk then shown.disk = appendMetric(storage, "database", diskText, diskValue, thresholds.disk_used_pct, colors, diskUsage) end
-  if settings.showDownload then shown.download = appendMetric(network, "arrow-down", formatRate(rx, settings.compactNetwork), rx, thresholds.net_rx, colors, rx and rx / NETWORK_MEGABYTE or nil) end
-  if settings.showUpload then shown.upload = appendMetric(network, "arrow-up", formatRate(tx, settings.compactNetwork), tx, thresholds.net_tx, colors, tx and tx / NETWORK_MEGABYTE or nil) end
+  if settings.showCpuUsage then shown.cpuUsage = appendMetric(processor, "cpu-usage", "cpu", formatPercent(cpuUsage), cpuUsage, thresholds.cpu_usage, colors, cpuUsage) end
+  if settings.showCpuTemperature then shown.cpuTemperature = appendMetric(processor, "cpu-temperature", "temperature", formatTemperature(cpuTemp), cpuTemp, thresholds.cpu_temp, colors, cpuTemp) end
+  if settings.showGpuUsage then shown.gpuUsage = appendMetric(graphics, "gpu-usage", "device-desktop", formatPercent(gpuUsage), gpuUsage, thresholds.gpu_usage, colors, gpuUsage) end
+  if settings.showGpuTemperature then shown.gpuTemperature = appendMetric(graphics, "gpu-temperature", "temperature", formatTemperature(gpuTemp), gpuTemp, thresholds.gpu_temp, colors, gpuTemp) end
+  if settings.showGpuVram then shown.gpuVram = appendMetric(graphics, "gpu-vram", "memory", formatPercent(gpuVram), gpuVram, thresholds.gpu_vram, colors, gpuVram) end
+  if settings.showRam then shown.ram = appendMetric(memory, "ram", "server-2", ramText, ramValue, thresholds.ram_pct, colors, ramUsage) end
+  if settings.showSwap then shown.swap = appendMetric(memory, "swap", "arrows-exchange", formatPercent(swapUsage), swapUsage, thresholds.swap_pct, colors, swapUsage) end
+  if settings.showDisk then shown.disk = appendMetric(storage, "disk", "database", diskText, diskValue, thresholds.disk_used_pct, colors, diskUsage) end
+  if settings.showDownload then shown.download = appendMetric(network, "download", "arrow-down", formatRate(rx, settings.compactNetwork), rx, thresholds.net_rx, colors, rx and rx / NETWORK_MEGABYTE or nil) end
+  if settings.showUpload then shown.upload = appendMetric(network, "upload", "arrow-up", formatRate(tx, settings.compactNetwork), tx, thresholds.net_tx, colors, tx and tx / NETWORK_MEGABYTE or nil) end
 
-  appendGroup(children, processor, settings.showSeparators)
-  appendGroup(children, graphics, settings.showSeparators)
-  appendGroup(children, memory, settings.showSeparators)
-  appendGroup(children, storage, settings.showSeparators)
-  appendGroup(children, network, settings.showSeparators)
+  appendGroup(children, processor, "processor", settings.showSeparators)
+  appendGroup(children, graphics, "graphics", settings.showSeparators)
+  appendGroup(children, memory, "memory", settings.showSeparators)
+  appendGroup(children, storage, "storage", settings.showSeparators)
+  appendGroup(children, network, "network", settings.showSeparators)
   if #children == 0 then
     renderFallback("alert-circle", "No data", "All enabled metrics are currently unavailable.", settings.showTooltip)
     return

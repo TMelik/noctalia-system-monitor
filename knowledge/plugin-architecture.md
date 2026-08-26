@@ -28,6 +28,8 @@ The update flow is:
 
 Threshold coloring is discrete: regular below activity, the configured activity color below critical, and the configured critical color at critical or above. Network values are converted to decimal MB/s for comparison; RAM and disk always use utilization percentages even when their labels show absolute amounts.
 
+Every metric glyph/label pair and category divider has a stable declarative UI key. The regular `on_surface` color is applied explicitly below the activity threshold, preventing Noctalia's retained UI nodes from carrying a prior highlight or divider color across threshold and auto-detection changes.
+
 Missing snapshots or individual sensors never become a misleading zero. Depending on settings, individual unavailable values display `—` or are omitted. Dedicated `System data unavailable`, `No metrics`, and `No data` fallbacks preserve access to the capsule.
 
 The tooltip follows the same CPU, GPU, memory, storage, and network ordering as the capsule. CPU usage, temperature, frequency, and load are opt-in via `show_cpu_details_in_tooltip` (default off) and appear together whenever enabled and at least one CPU metric is rendered. VRAM, RAM, swap, and disk values combine utilization with `used / total`. Network combines only enabled and rendered RX/TX directions, but shows compact binary session totals rather than duplicating the live rates.
