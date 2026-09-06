@@ -28,7 +28,7 @@ The update flow is:
 
 Threshold coloring is discrete: regular below activity, the configured activity color below critical, and the configured critical color at critical or above. Network values are converted to decimal MB/s for comparison; RAM and disk always use utilization percentages even when their labels show absolute amounts.
 
-Every metric glyph/label pair and category divider has a stable declarative UI key. The regular `on_surface` color is applied explicitly below the activity threshold, preventing Noctalia's retained UI nodes from carrying a prior highlight or divider color across threshold and auto-detection changes.
+Every metric glyph/label pair and category divider has a stable declarative UI key. Below the activity threshold, metric nodes leave `color` unset so Noctalia supplies the widget foreground and icon colors; explicit activity and critical colors still override those defaults. The host reapplies its defaults when a retained node drops an explicit color, preventing a prior threshold color from sticking.
 
 Missing snapshots or individual sensors never become a misleading zero. Depending on settings, individual unavailable values display `—` or are omitted. Dedicated `System data unavailable`, `No metrics`, and `No data` fallbacks preserve access to the capsule.
 
