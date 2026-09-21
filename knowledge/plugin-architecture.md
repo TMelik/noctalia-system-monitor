@@ -23,12 +23,12 @@ The update flow is:
 4. When top processes are enabled, poll `ps` asynchronously every five seconds without overlapping calls and derive the top CPU/RAM consumers.
 5. Resolve each GPU row's `auto`/`on`/`off` setting against whether Noctalia's snapshot actually reports that field (`usagePercent`, `tempC`, or both VRAM byte fields), then derive swap and VRAM percentages plus RAM/disk used and available amounts.
 6. When CPU details are shown in the tooltip and Noctalia doesn't report `cpu.freqMhz`, poll a CPU-frequency fallback asynchronously every five seconds (sysfs `scaling_cur_freq`, then `/proc/cpuinfo`) without overlapping calls.
-7. Render available glyph/label pairs in CPU, GPU, memory, storage, network order inside one orientation-aware capsule.
+7. Render available identifier/value pairs in CPU, GPU, memory, storage, network order inside one orientation-aware capsule. Each of the seven identifier categories independently selects its default glyph or configured text label.
 8. Publish an ordered two-column tooltip as `{ key, value }` rows for metrics that were actually rendered, followed by optional CPU-detail and process rows.
 
 Threshold coloring is discrete: regular below activity, the configured activity color below critical, and the configured critical color at critical or above. Network values are converted to decimal MB/s for comparison; RAM and disk always use utilization percentages even when their labels show absolute amounts.
 
-Every metric glyph/label pair and category divider has a stable declarative UI key. Below the activity threshold, metric nodes leave `color` unset so Noctalia supplies the widget foreground and icon colors; explicit activity and critical colors still override those defaults. The host reapplies its defaults when a retained node drops an explicit color, preventing a prior threshold color from sticking.
+Every metric identifier/value pair and category divider has a stable declarative UI key. Glyph and text identifier variants use distinct keys so switching modes replaces the node cleanly. CPU and GPU text modes emit one identifier before the first rendered value in their category; that identifier uses the highest threshold severity among the category's enabled metrics. Below the activity threshold, metric nodes leave `color` unset so Noctalia supplies the widget foreground for labels and icon color for glyphs; explicit activity and critical colors still override those defaults. The host reapplies its defaults when a retained node drops an explicit color, preventing a prior threshold color from sticking.
 
 Missing snapshots or individual sensors never become a misleading zero. Depending on settings, individual unavailable values display `—` or are omitted. Dedicated `System data unavailable`, `No metrics`, and `No data` fallbacks preserve access to the capsule.
 

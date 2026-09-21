@@ -25,7 +25,7 @@ System Monitor combines CPU, auto-detected GPU, memory, storage, and network met
 
 Left-click the capsule to open the **System** tab in Control Center. Hover it to see a two-column details table. Rows follow the capsule's CPU, GPU, memory, storage, and network order; CPU usage, temperature, frequency, and load are opt-in via `show_cpu_details_in_tooltip` since the capsule already shows enabled CPU metrics. RAM, swap, disk, and VRAM rows show utilization plus `used / total` amounts. The network row shows RX/TX accumulated during the current plugin session instead of repeating the live rates from the capsule. The final rows identify the highest CPU and RAM consumers.
 
-Middle-click the capsule to open its settings. Each metric can be shown or hidden independently; GPU metrics default to `auto` (shown only when a GPU reports that field). You can also toggle category separators and the detailed tooltip, choose compact or explicit network units, select a network interface, choose percentage/used/available displays for RAM and disk, and change the monitored disk path. The default path is the root filesystem (`/`).
+Middle-click the capsule to open its settings. Each metric can be shown or hidden independently; GPU metrics default to `auto` (shown only when a GPU reports that field). CPU, GPU, VRAM, RAM, swap, disk, and network each have an independent option to replace their glyphs with text identifiers; glyphs remain the default. You can also toggle category separators and the detailed tooltip, choose compact or explicit network units, select a network interface, choose percentage/used/available displays for RAM and disk, and change the monitored disk path. The default path is the root filesystem (`/`).
 
 Unavailable sensors are displayed as an em dash instead of a misleading zero, or can be hidden. An unknown network interface is unavailable and never silently falls back to total traffic. RAM uses a distinct server-module glyph so it is easy to tell apart from CPU at a glance.
 
@@ -43,6 +43,13 @@ Unavailable sensors are displayed as an em dash instead of a misleading zero, or
 | `show_disk` | `bool` | `true` | Show utilization for `disk_path`. |
 | `show_download` | `bool` | `true` | Show aggregate receive rate. |
 | `show_upload` | `bool` | `true` | Show aggregate transmit rate. |
+| `cpu_text_label` | `bool` | `false` | Replace CPU glyphs with one shared `CPU` identifier. |
+| `gpu_text_label` | `bool` | `false` | Replace GPU usage/temperature glyphs with one shared `GPU` identifier. |
+| `vram_text_label` | `bool` | `false` | Replace the VRAM glyph with `VRAM`. |
+| `ram_text_label` | `bool` | `false` | Replace the RAM glyph with `RAM`. |
+| `swap_text_label` | `bool` | `false` | Replace the swap glyph with `SWAP`. |
+| `disk_text_label` | `bool` | `false` | Replace the disk glyph with `DISK`. |
+| `network_text_labels` | `bool` | `false` | Replace download/upload glyphs with `RX`/`TX`. |
 | `highlight_values` | `bool` | `true` | Color glyphs and labels at Noctalia's activity and critical thresholds. |
 | `activity_color` | `color` | `primary` | Color used from the activity threshold. |
 | `critical_color` | `color` | `error` | Color used from the critical threshold. |
@@ -73,6 +80,10 @@ The widget reads the effective `system.monitor.*_activity_threshold` and `*_crit
 - The tooltip includes only metrics that are both enabled and rendered. Its amount rows do not include available memory or sample age.
 - Network session totals are estimated from Noctalia's sampled rates. They start at zero when the plugin runtime loads, do not persist across a Noctalia reload/restart, and are not system-uptime counters. An explicitly selected interface has its own session totals.
 - If every metric is disabled, the capsule shows `No metrics`. If enabled metrics are all hidden because they are unavailable, it shows `No data`.
+
+## TODO
+
+- Add independent per-category options to show text identifiers alongside metric glyphs instead of replacing them.
 
 ## Development
 

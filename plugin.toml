@@ -1,6 +1,6 @@
 id = "tmelik/system-monitor"
 name = "System Monitor"
-version = "1.5.2"
+version = "1.6.0"
 plugin_api = 26
 author = "TMelik"
 license = "GPL-3.0-only"
@@ -93,6 +93,48 @@ key = "show_upload"
 type = "bool"
 label_key = "settings.show_upload.label"
 default = true
+
+[[widget.setting]]
+key = "cpu_text_label"
+type = "bool"
+label_key = "settings.cpu_text_label.label"
+default = false
+
+[[widget.setting]]
+key = "gpu_text_label"
+type = "bool"
+label_key = "settings.gpu_text_label.label"
+default = false
+
+[[widget.setting]]
+key = "vram_text_label"
+type = "bool"
+label_key = "settings.vram_text_label.label"
+default = false
+
+[[widget.setting]]
+key = "ram_text_label"
+type = "bool"
+label_key = "settings.ram_text_label.label"
+default = false
+
+[[widget.setting]]
+key = "swap_text_label"
+type = "bool"
+label_key = "settings.swap_text_label.label"
+default = false
+
+[[widget.setting]]
+key = "disk_text_label"
+type = "bool"
+label_key = "settings.disk_text_label.label"
+default = false
+
+[[widget.setting]]
+key = "network_text_labels"
+type = "bool"
+label_key = "settings.network_text_labels.label"
+default = false
 
 [[widget.setting]]
 key = "highlight_values"

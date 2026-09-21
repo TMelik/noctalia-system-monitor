@@ -134,10 +134,30 @@ local function thresholdPair(name)
   return activity, critical
 end
 
+local function metricLevel(value, thresholds, colors)
+  if not colors.highlightValues or type(value) ~= "number" or thresholds[2] == 0 then return 0 end
+  if value >= thresholds[2] then return 2 end
+  if value >= thresholds[1] then return 1 end
+  return 0
+end
+
 local function metricColor(value, thresholds, colors)
-  if not colors.highlightValues or type(value) ~= "number" or thresholds[2] == 0 then return nil end
-  if value >= thresholds[2] then return colors.criticalColor end
-  if value >= thresholds[1] then return colors.activityColor end
+  local level = metricLevel(value, thresholds, colors)
+  if level == 2 then return colors.criticalColor end
+  if level == 1 then return colors.activityColor end
+  return nil
+end
+
+local function categoryColor(colors, ...)
+  local highest = 0
+  for index = 1, select("#", ...) do
+    local metric = select(index, ...)
+    if type(metric) == "table" then
+      highest = math.max(highest, metricLevel(metric[1], metric[2], colors))
+    end
+  end
+  if highest == 2 then return colors.criticalColor end
+  if highest == 1 then return colors.activityColor end
   return nil
 end
 
@@ -152,16 +172,27 @@ local function appendGroup(children, group, key, showSeparators)
   for _, child in ipairs(group) do table.insert(children, child) end
 end
 
-local function appendMetric(group, key, glyph, text, value, thresholds, colors, highlightValue)
+local function appendMetric(group, key, glyph, identifier,
+    text, value, thresholds, colors, highlightValue)
   if value == nil and colors.hideUnavailable then return false end
   local color = metricColor(highlightValue, thresholds, colors)
-  local glyphProps = { key = key .. ":glyph", name = glyph, size = 14 }
   local labelProps = { key = key .. ":label", text = text }
+  if identifier.useTextLabel then
+    if not identifier.rendered then
+      local identifierProps = { key = identifier.key .. ":name", text = identifier.text }
+      local identifierColor = identifier.color or color
+      if identifierColor ~= nil then identifierProps.color = identifierColor end
+      table.insert(group, ui.label(identifierProps))
+      identifier.rendered = true
+    end
+  else
+    local glyphProps = { key = key .. ":glyph", name = glyph, size = 14 }
+    if color ~= nil then glyphProps.color = color end
+    table.insert(group, ui.glyph(glyphProps))
+  end
   if color ~= nil then
-    glyphProps.color = color
     labelProps.color = color
   end
-  table.insert(group, ui.glyph(glyphProps))
   table.insert(group, ui.label(labelProps))
   return true
 end
@@ -521,6 +552,13 @@ function update()
     showRam = configBool("show_ram", true), showSwap = configBool("show_swap", true),
     showDisk = configBool("show_disk", true), showDownload = configBool("show_download", true),
     showUpload = configBool("show_upload", true), showSeparators = configBool("show_separators", true),
+    cpuTextLabel = configBool("cpu_text_label", false),
+    gpuTextLabel = configBool("gpu_text_label", false),
+    vramTextLabel = configBool("vram_text_label", false),
+    ramTextLabel = configBool("ram_text_label", false),
+    swapTextLabel = configBool("swap_text_label", false),
+    diskTextLabel = configBool("disk_text_label", false),
+    networkTextLabels = configBool("network_text_labels", false),
     showTooltip = configBool("show_tooltip", true), compactNetwork = configBool("compact_network", true),
     showTopProcesses = configBool("show_top_processes", true),
     highlightValues = configBool("highlight_values", true), hideUnavailable = configBool("hide_unavailable", false),
@@ -597,17 +635,33 @@ function update()
     activityColor = settings.activityColor, criticalColor = settings.criticalColor }
   local children, processor, graphics, memory, storage, network = {}, {}, {}, {}, {}, {}
   local shown = {}
+  local identifiers = {
+    cpu = { key = "cpu", text = "CPU", useTextLabel = settings.cpuTextLabel,
+      color = categoryColor(colors,
+        settings.showCpuUsage and { cpuUsage, thresholds.cpu_usage } or nil,
+        settings.showCpuTemperature and { cpuTemp, thresholds.cpu_temp } or nil) },
+    gpu = { key = "gpu", text = "GPU", useTextLabel = settings.gpuTextLabel,
+      color = categoryColor(colors,
+        settings.showGpuUsage and { gpuUsage, thresholds.gpu_usage } or nil,
+        settings.showGpuTemperature and { gpuTemp, thresholds.gpu_temp } or nil) },
+    vram = { key = "vram", text = "VRAM", useTextLabel = settings.vramTextLabel },
+    ram = { key = "ram", text = "RAM", useTextLabel = settings.ramTextLabel },
+    swap = { key = "swap", text = "SWAP", useTextLabel = settings.swapTextLabel },
+    disk = { key = "disk", text = "DISK", useTextLabel = settings.diskTextLabel },
+    download = { key = "download", text = "RX", useTextLabel = settings.networkTextLabels },
+    upload = { key = "upload", text = "TX", useTextLabel = settings.networkTextLabels },
+  }
 
-  if settings.showCpuUsage then shown.cpuUsage = appendMetric(processor, "cpu-usage", "cpu", formatPercent(cpuUsage), cpuUsage, thresholds.cpu_usage, colors, cpuUsage) end
-  if settings.showCpuTemperature then shown.cpuTemperature = appendMetric(processor, "cpu-temperature", "temperature", formatTemperature(cpuTemp), cpuTemp, thresholds.cpu_temp, colors, cpuTemp) end
-  if settings.showGpuUsage then shown.gpuUsage = appendMetric(graphics, "gpu-usage", "device-desktop", formatPercent(gpuUsage), gpuUsage, thresholds.gpu_usage, colors, gpuUsage) end
-  if settings.showGpuTemperature then shown.gpuTemperature = appendMetric(graphics, "gpu-temperature", "temperature", formatTemperature(gpuTemp), gpuTemp, thresholds.gpu_temp, colors, gpuTemp) end
-  if settings.showGpuVram then shown.gpuVram = appendMetric(graphics, "gpu-vram", "memory", formatPercent(gpuVram), gpuVram, thresholds.gpu_vram, colors, gpuVram) end
-  if settings.showRam then shown.ram = appendMetric(memory, "ram", "server-2", ramText, ramValue, thresholds.ram_pct, colors, ramUsage) end
-  if settings.showSwap then shown.swap = appendMetric(memory, "swap", "arrows-exchange", formatPercent(swapUsage), swapUsage, thresholds.swap_pct, colors, swapUsage) end
-  if settings.showDisk then shown.disk = appendMetric(storage, "disk", "database", diskText, diskValue, thresholds.disk_used_pct, colors, diskUsage) end
-  if settings.showDownload then shown.download = appendMetric(network, "download", "arrow-down", formatRate(rx, settings.compactNetwork), rx, thresholds.net_rx, colors, rx and rx / NETWORK_MEGABYTE or nil) end
-  if settings.showUpload then shown.upload = appendMetric(network, "upload", "arrow-up", formatRate(tx, settings.compactNetwork), tx, thresholds.net_tx, colors, tx and tx / NETWORK_MEGABYTE or nil) end
+  if settings.showCpuUsage then shown.cpuUsage = appendMetric(processor, "cpu-usage", "cpu", identifiers.cpu, formatPercent(cpuUsage), cpuUsage, thresholds.cpu_usage, colors, cpuUsage) end
+  if settings.showCpuTemperature then shown.cpuTemperature = appendMetric(processor, "cpu-temperature", "temperature", identifiers.cpu, formatTemperature(cpuTemp), cpuTemp, thresholds.cpu_temp, colors, cpuTemp) end
+  if settings.showGpuUsage then shown.gpuUsage = appendMetric(graphics, "gpu-usage", "device-desktop", identifiers.gpu, formatPercent(gpuUsage), gpuUsage, thresholds.gpu_usage, colors, gpuUsage) end
+  if settings.showGpuTemperature then shown.gpuTemperature = appendMetric(graphics, "gpu-temperature", "temperature", identifiers.gpu, formatTemperature(gpuTemp), gpuTemp, thresholds.gpu_temp, colors, gpuTemp) end
+  if settings.showGpuVram then shown.gpuVram = appendMetric(graphics, "gpu-vram", "memory", identifiers.vram, formatPercent(gpuVram), gpuVram, thresholds.gpu_vram, colors, gpuVram) end
+  if settings.showRam then shown.ram = appendMetric(memory, "ram", "server-2", identifiers.ram, ramText, ramValue, thresholds.ram_pct, colors, ramUsage) end
+  if settings.showSwap then shown.swap = appendMetric(memory, "swap", "arrows-exchange", identifiers.swap, formatPercent(swapUsage), swapUsage, thresholds.swap_pct, colors, swapUsage) end
+  if settings.showDisk then shown.disk = appendMetric(storage, "disk", "database", identifiers.disk, diskText, diskValue, thresholds.disk_used_pct, colors, diskUsage) end
+  if settings.showDownload then shown.download = appendMetric(network, "download", "arrow-down", identifiers.download, formatRate(rx, settings.compactNetwork), rx, thresholds.net_rx, colors, rx and rx / NETWORK_MEGABYTE or nil) end
+  if settings.showUpload then shown.upload = appendMetric(network, "upload", "arrow-up", identifiers.upload, formatRate(tx, settings.compactNetwork), tx, thresholds.net_tx, colors, tx and tx / NETWORK_MEGABYTE or nil) end
 
   appendGroup(children, processor, "processor", settings.showSeparators)
   appendGroup(children, graphics, "graphics", settings.showSeparators)
