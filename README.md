@@ -1,6 +1,6 @@
 # System Monitor
 
-System Monitor combines CPU, auto-detected GPU, memory, storage, and network metrics into one compact Noctalia bar capsule. Subtle dividers separate non-empty groups, and values can use the global Noctalia system-monitor critical threshold for highlighting.
+System Monitor combines CPU, optional GPU, memory, storage, and network metrics into one compact Noctalia bar capsule. Subtle dividers separate non-empty groups, and values can use the global Noctalia system-monitor critical threshold for highlighting.
 
 ## Plugin
 
@@ -25,7 +25,7 @@ System Monitor combines CPU, auto-detected GPU, memory, storage, and network met
 
 Left-click the capsule to open the **System** tab in Control Center. Hover it to see a two-column details table. Rows follow the capsule's CPU, GPU, memory, storage, and network order; CPU usage, temperature, frequency, and load are opt-in via `show_cpu_details_in_tooltip` since the capsule already shows enabled CPU metrics. RAM, swap, disk, and VRAM rows show utilization plus `used / total` amounts. The network row shows RX/TX accumulated during the current plugin session instead of repeating the live rates from the capsule. The final rows identify the highest CPU and RAM consumers.
 
-Middle-click the capsule to open its settings. Each metric can be shown or hidden independently; GPU metrics default to `auto` (shown only when a GPU reports that field). CPU, GPU, VRAM, RAM, swap, disk, and network each have an independent option to replace their glyphs with text identifiers; glyphs remain the default. You can also toggle category separators and the detailed tooltip, choose compact or explicit network units, select a network interface, choose percentage/used/available displays for RAM and disk, and change the monitored disk path. The default path is the root filesystem (`/`).
+Middle-click the capsule to open its settings. Each metric can be shown or hidden independently; GPU metrics default to `off` (set to `auto` to show a field when a GPU reports it, or `on` to force it). CPU, GPU, VRAM, RAM, swap, disk, and network each have an independent option to replace their glyphs with text identifiers; glyphs remain the default. You can also toggle category separators and the detailed tooltip, choose compact or explicit network units, select a network interface, choose percentage/used/available displays for RAM and disk, and change the monitored disk path. The default path is the root filesystem (`/`).
 
 Unavailable sensors are displayed as an em dash instead of a misleading zero, or can be hidden. An unknown network interface is unavailable and never silently falls back to total traffic. RAM uses a distinct server-module glyph so it is easy to tell apart from CPU at a glance.
 
@@ -35,9 +35,9 @@ Unavailable sensors are displayed as an em dash instead of a misleading zero, or
 | --- | --- | --- | --- |
 | `show_cpu_usage` | `bool` | `true` | Show aggregate CPU usage. |
 | `show_cpu_temperature` | `bool` | `true` | Show CPU temperature when a sensor is available. |
-| `show_gpu_usage` | `select` | `auto` | `auto`/`on`/`off`. Auto shows GPU utilization when a GPU reports it. |
-| `show_gpu_temperature` | `select` | `auto` | `auto`/`on`/`off`. Auto shows GPU temperature when a GPU reports it. |
-| `show_gpu_vram` | `select` | `auto` | `auto`/`on`/`off`. Auto shows GPU VRAM usage when a GPU reports it. |
+| `show_gpu_usage` | `select` | `off` | `auto`/`on`/`off`. Auto shows GPU utilization when a GPU reports it. |
+| `show_gpu_temperature` | `select` | `off` | `auto`/`on`/`off`. Auto shows GPU temperature when a GPU reports it. |
+| `show_gpu_vram` | `select` | `off` | `auto`/`on`/`off`. Auto shows GPU VRAM usage when a GPU reports it. |
 | `show_ram` | `bool` | `true` | Show RAM utilization. |
 | `show_swap` | `bool` | `true` | Show swap utilization. |
 | `show_disk` | `bool` | `true` | Show utilization for `disk_path`. |

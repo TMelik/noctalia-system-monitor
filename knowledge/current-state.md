@@ -1,7 +1,7 @@
 ---
 type: Handoff
 title: Current implementation state
-description: Implementation and verification state for System Monitor 1.6.0.
+description: Implementation and verification state for System Monitor 1.6.1.
 tags: [handoff, status, release]
 status: stable
 sources:
@@ -13,7 +13,7 @@ sources:
 
 # Current implementation state
 
-Version `1.6.0` implements one bar widget using plugin API 26 and the declared `ps` and `cat` dependencies. The default remains the original seven metrics in one capsule, with GPU usage, temperature, and VRAM inserted as a separate group whenever a GPU reports that field (`auto`/`on`/`off` per metric, default `auto`). RAM and disk support percentage, used, and available display modes; network rates can use aggregate traffic or an exact interface. Independent CPU, GPU, VRAM, RAM, swap, disk, and network switches can replace their glyphs with text identifiers while preserving the glyph-based default and supporting mixed layouts. CPU and GPU text modes emit one shared category identifier before their usage/temperature values.
+Version `1.6.1` implements one bar widget using plugin API 26 and the declared `ps` and `cat` dependencies. The default remains the original seven metrics in one capsule, with GPU usage, temperature, and VRAM inserted as a separate group whenever a GPU reports that field (`auto`/`on`/`off` per metric, default `off` because integrated GPUs also report these fields). RAM and disk support percentage, used, and available display modes; network rates can use aggregate traffic or an exact interface. Independent CPU, GPU, VRAM, RAM, swap, disk, and network switches can replace their glyphs with text identifiers while preserving the glyph-based default and supporting mixed layouts. CPU and GPU text modes emit one shared category identifier before their usage/temperature values.
 
 The manifest also exposes unavailable-value hiding, top-process visibility, and discrete activity/critical colors driven by effective global Noctalia thresholds. Metric and divider nodes use stable keys, with separate identifier keys for glyph and text modes. Normal metric nodes leave `color` unset so a compatible Noctalia host supplies the standard widget foreground and icon colors, while activity and critical states explicitly override them. The host must restore those defaults when retained nodes leave a threshold state. Empty categories do not leave orphan separators. The three fallback states distinguish a missing system snapshot, all metrics disabled, and all enabled metrics hidden as unavailable. The normal tooltip is a native ordered two-column table limited to rendered metrics; amount rows show percentage and `used / total`. CPU usage, temperature, frequency, and load are opt-in tooltip rows (`show_cpu_details_in_tooltip`, default off) since the capsule already shows enabled CPU metrics; when enabled and Noctalia doesn't report CPU frequency, the widget falls back to reading it via `cat` from sysfs then `/proc/cpuinfo`. Network shows non-persistent RX/TX totals accumulated during the plugin runtime session, and default-enabled Top CPU/RAM rows use sanitized `ps` metadata.
 

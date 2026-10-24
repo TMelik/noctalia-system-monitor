@@ -1,6 +1,6 @@
 id = "tmelik/system-monitor"
 name = "System Monitor"
-version = "1.6.0"
+version = "1.6.1"
 plugin_api = 26
 author = "TMelik"
 license = "GPL-3.0-only"
@@ -33,7 +33,7 @@ key = "show_gpu_usage"
 type = "select"
 label_key = "settings.show_gpu_usage.label"
 description_key = "settings.show_gpu_usage.description"
-default = "auto"
+default = "off"
 options = [
   { value = "auto", label_key = "settings.tri_state.auto" },
   { value = "on", label_key = "settings.tri_state.on" },
@@ -45,7 +45,7 @@ key = "show_gpu_temperature"
 type = "select"
 label_key = "settings.show_gpu_temperature.label"
 description_key = "settings.show_gpu_temperature.description"
-default = "auto"
+default = "off"
 options = [
   { value = "auto", label_key = "settings.tri_state.auto" },
   { value = "on", label_key = "settings.tri_state.on" },
@@ -57,7 +57,7 @@ key = "show_gpu_vram"
 type = "select"
 label_key = "settings.show_gpu_vram.label"
 description_key = "settings.show_gpu_vram.description"
-default = "auto"
+default = "off"
 options = [
   { value = "auto", label_key = "settings.tri_state.auto" },
   { value = "on", label_key = "settings.tri_state.on" },
